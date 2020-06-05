@@ -111,6 +111,7 @@ namespace rfb {
       static StringParameter disconnectAction;
       static BoolParameter removeWallpaper;
       static BoolParameter disableEffects;
+      static StringParameter displayDevice;
 
       // -=- Use by VNC Config to determine whether hooks are available
       static bool areHooksAvailable();

@@ -50,7 +50,7 @@ BoolParameter rfb::win32::SDisplay::disableLocalInputs("DisableLocalInputs",
   "Disable local keyboard and pointer input while the server is in use", false);
 StringParameter rfb::win32::SDisplay::disconnectAction("DisconnectAction",
   "Action to perform when all clients have disconnected.  (None, Lock, Logoff)", "None");
-StringParameter displayDevice("DisplayDevice",
+StringParameter rfb::win32::SDisplay::displayDevice("DisplayDevice",
   "Display device name of the monitor to be remoted, or empty to export the whole desktop.", "");
 BoolParameter rfb::win32::SDisplay::removeWallpaper("RemoveWallpaper",
   "Remove the desktop wallpaper when the server is in use.", false);

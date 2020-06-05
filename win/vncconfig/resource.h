@@ -76,6 +76,9 @@
 #define IDC_LOAD_CERT                   1087
 #define IDC_LOAD_CERTKEY                1088
 #define IDC_RAW_KEYBOARD                1089
+#define IDC_SCREENS_ALL                 1090
+#define IDC_SCREENS_ONE                 1091
+#define IDC_SCREENS_SHARE               1092
 #define ID_OPTIONS                      40001
 #define ID_CLOSE                        40002
 #define ID_ABOUT                        40003

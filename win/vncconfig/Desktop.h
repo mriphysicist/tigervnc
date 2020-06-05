@@ -34,11 +34,18 @@ namespace rfb {
         CharArray action(rfb::win32::SDisplay::disconnectAction.getData());
         bool disconnectLock = stricmp(action.buf, "Lock") == 0;
         bool disconnectLogoff = stricmp(action.buf, "Logoff") == 0;
+        CharArray display(rfb::win32::SDisplay::displayDevice.getData());
+        bool displayShareAll = stricmp(display.buf, "") == 0;
         setItemChecked(IDC_DISCONNECT_LOGOFF, disconnectLogoff);
         setItemChecked(IDC_DISCONNECT_LOCK, disconnectLock);
         setItemChecked(IDC_DISCONNECT_NONE, !disconnectLock && !disconnectLogoff);
         setItemChecked(IDC_REMOVE_WALLPAPER, rfb::win32::SDisplay::removeWallpaper);
         setItemChecked(IDC_DISABLE_EFFECTS, rfb::win32::SDisplay::disableEffects);
+        setItemChecked(IDC_SCREENS_ALL, displayShareAll);
+        setItemChecked(IDC_SCREENS_ONE, !displayShareAll);
+        setItemString(IDC_SCREENS_SHARE, display.buf);
+
+        onCommand(IDC_SCREENS_ONE, EN_CHANGE);
       }
       bool onCommand(int id, int cmd) {
         switch (id) {
@@ -47,6 +54,7 @@ namespace rfb {
         case IDC_DISCONNECT_NONE:
         case IDC_REMOVE_WALLPAPER:
         case IDC_DISABLE_EFFECTS:
+        {
           CharArray action(rfb::win32::SDisplay::disconnectAction.getData());
           bool disconnectLock = stricmp(action.buf, "Lock") == 0;
           bool disconnectLogoff = stricmp(action.buf, "Logoff") == 0;
@@ -56,17 +64,51 @@ namespace rfb {
                      (isItemChecked(IDC_DISABLE_EFFECTS) != rfb::win32::SDisplay::disableEffects));
           break;
         }
+        case IDC_SCREENS_ALL:
+        {
+          CharArray display(rfb::win32::SDisplay::displayDevice.getData());
+          bool displayShareAll = stricmp(display.buf, "") == 0;
+          setChanged(displayShareAll != isItemChecked(IDC_SCREENS_ALL));
+          if(isItemChecked(IDC_SCREENS_ALL)) {
+            setItemString(IDC_SCREENS_SHARE, "");
+          }
+          break;
+        }
+        case IDC_SCREENS_ONE:
+        {
+          CharArray display(rfb::win32::SDisplay::displayDevice.getData());
+          bool displayShareAll = stricmp(display.buf, "") == 0;
+          bool displayShareOne = !displayShareAll;
+          setChanged(displayShareOne != isItemChecked(IDC_SCREENS_ONE));
+          enableItem(IDC_SCREENS_SHARE, isItemChecked(IDC_SCREENS_ONE));
+          break;
+        }
+        case IDC_IDLE_TIMEOUT:
+        case IDC_SCREENS_SHARE:
+        {
+          if(cmd == EN_CHANGE)
+          {
+            CharArray display(rfb::win32::SDisplay::displayDevice.getData());
+            setChanged(stricmp(display.buf, getItemString(IDC_SCREENS_SHARE)) != 0);
+          }
+          break;
+        }
+        }
         return false;
       }
       bool onOk() {
         const TCHAR* action = _T("None");
+        const TCHAR* display = _T("");
         if (isItemChecked(IDC_DISCONNECT_LOGOFF))
           action = _T("Logoff");
         else if (isItemChecked(IDC_DISCONNECT_LOCK))
           action = _T("Lock");
+        if (isItemChecked(IDC_SCREENS_ONE))
+          display = getItemString(IDC_SCREENS_SHARE);
         regKey.setString(_T("DisconnectAction"), action);
         regKey.setBool(_T("RemoveWallpaper"), isItemChecked(IDC_REMOVE_WALLPAPER));
         regKey.setBool(_T("DisableEffects"), isItemChecked(IDC_DISABLE_EFFECTS));
+        regKey.setString(_T("DisplayDevice"), display);
         return true;
       }
     protected:
