@@ -43,6 +43,7 @@ namespace rfb {
       static PixelFormat getPF(HDC dc);
       Rect getClipBox() const;
       static Rect getClipBox(HDC dc);
+      static void getDeviceName(const TCharArray &deviceNumStr, TCharArray &deviceName);
     protected:
       HDC dc;
     };

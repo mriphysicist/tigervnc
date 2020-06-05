@@ -151,6 +151,19 @@ Rect DeviceContext::getClipBox(HDC dc) {
   return Rect(cr.left, cr.top, cr.right, cr.bottom);
 }
 
+void DeviceContext::getDeviceName(const TCharArray &deviceNumStr, TCharArray &deviceName) {
+  DISPLAY_DEVICE myDevice;
+  myDevice.cb = sizeof(DISPLAY_DEVICE);
+  vlog.info("Attempting to retrieve device name for device number: %s", deviceNumStr.buf);
+  if (deviceNumStr.buf[0]) {
+    int deviceNum = _ttoi(deviceNumStr.buf);
+    vlog.info("Retrieving device name of device number %i", deviceNum);
+	  EnumDisplayDevices(NULL, deviceNum, &myDevice, EDD_GET_DEVICE_INTERFACE_NAME);
+    vlog.info("Device name is: %s", myDevice.DeviceName);
+    deviceName.replaceBuf(tstrDup(myDevice.DeviceName));
+  }
+}
+
 
 DeviceDC::DeviceDC(const TCHAR* deviceName) {
   dc = ::CreateDC(_T("DISPLAY"), deviceName, NULL, NULL);

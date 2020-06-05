@@ -444,7 +444,10 @@ SDisplay::recreatePixelBuffer(bool force) {
   //   Opening the whole display with CreateDC doesn't work on multi-monitor
   //   systems for some reason.
   DeviceContext* new_device = 0;
-  TCharArray deviceName(displayDevice.getData());
+  TCharArray deviceNumStr(displayDevice.getData());
+  TCharArray deviceName;
+  DeviceContext::getDeviceName(deviceNumStr, deviceName);
+  vlog.info("Device name: %s", deviceName.buf);
   if (deviceName.buf[0]) {
     vlog.info("Attaching to device %s", (const char*)CStr(deviceName.buf));
     new_device = new DeviceDC(deviceName.buf);
