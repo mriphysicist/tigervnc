@@ -163,7 +163,7 @@ if(BUILD_STATIC_GCC)
       # pthread has to be statically linked after libraries above and before kernel32
       set(STATIC_BASE_LIBRARIES "${STATIC_BASE_LIBRARIES} -Wl,-Bstatic -lpthread -Wl,-Bdynamic")
     endif()
-    set(STATIC_BASE_LIBRARIES "${STATIC_BASE_LIBRARIES} -luser32 -lkernel32 -ladvapi32 -lshell32")
+    set(STATIC_BASE_LIBRARIES "${STATIC_BASE_LIBRARIES} -luser32 -ladvapi32 -lkernel32 -lshell32")
     # mingw has some fun circular dependencies that requires us to link
     # these things again
     set(STATIC_BASE_LIBRARIES "${STATIC_BASE_LIBRARIES} -lmingw32 -lgcc_eh -lgcc -lmoldname -lmingwex -lmsvcrt")
