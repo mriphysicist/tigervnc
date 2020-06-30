@@ -23,6 +23,51 @@ include(CheckCSourceRuns)
 
 include(CMakeMacroLibtoolFile)
 
+if(WIN32)
+  # code to support windows installer
+  # use add_win_dll_dep(<dll filename>) every time a library is added to the linker
+  set(gp_tool objdump) # prevents a gp_tool error in MSYS2 on Windows
+  include(GetPrerequisites)
+
+  macro(append_unique_to_cache_list LIST ITEM)
+    if(NOT ${LIST})
+      set(${LIST} "${ITEM}" CACHE INTERNAL "")
+    else()
+      # escape regex sensitive characters in ${ITEM}
+      string(REPLACE "^" "\\^" regex_safe_item "${ITEM}")
+      string(REPLACE "$" "\\$" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "." "\\." regex_safe_item "${regex_safe_item}")
+      string(REPLACE "[" "\\[" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "]" "\\]" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "*" "\\*" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "+" "\\+" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "?" "\\?" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "|" "\\|" regex_safe_item "${regex_safe_item}")
+      string(REPLACE "(" "\\(" regex_safe_item "${regex_safe_item}")
+      string(REPLACE ")" "\\)" regex_safe_item "${regex_safe_item}")
+      # use regular expression to see if item is in the list (IN_LIST would be easier but this maintains backward compatibility)
+      if(NOT ${LIST} MATCHES "^(.*;)?${regex_safe_item}(;.*)?$")
+        set(${LIST} "${${LIST}}" "${ITEM}" CACHE INTERNAL "")
+      endif()
+    endif()
+  endmacro(append_unique_to_cache_list)
+
+  function(add_win_dll_dep NEW_WIN_DLL)
+    # requires GetPrerequisites
+    # append the dependent dll if it is unique
+    append_unique_to_cache_list(WIN_DLL_DEPS "${NEW_WIN_DLL}")
+    # get the full path of the dll
+    gp_resolve_item("${MY_BINARY_LOCATION}" "${NEW_WIN_DLL}" "" "" resolved_file)
+    # resolve all the prerequisites recursively ignoring system files
+    get_prerequisites("${resolved_file}" DEPENDENCIES 1 1 "" "")
+    # loop through additional dependencies
+    foreach(DEPENDENCY_FILE ${DEPENDENCIES})
+      # append the dependent dll if it is unique
+      append_unique_to_cache_list(WIN_DLL_DEPS "${DEPENDENCY_FILE}")
+    endforeach()
+  endfunction(add_win_dll_dep)
+endif()
+
 project(tigervnc)
 set(VERSION 1.10.80)
 

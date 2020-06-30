@@ -74,6 +74,10 @@ if(WIN32)
 endif(WIN32)
 
 set(RFB_LIBRARIES ${JPEG_LIBRARIES} ${PIXMAN_LIBRARY} os rdr)
+if(WIN32 AND NOT BUILD_STATIC)
+  add_win_dll_dep(libjpeg-8.dll)
+  add_win_dll_dep(libpixman-1-0.dll)
+endif()
 
 if(UNIX AND NOT APPLE)
   set(RFB_SOURCES ${RFB_SOURCES} UnixPasswordValidator.cxx
@@ -91,6 +95,9 @@ if(GNUTLS_FOUND)
     ${RFB_LIBRARIES}
     ${GNUTLS_LIBRARIES}
   )
+  if(WIN32 AND NOT BUILD_STATIC)
+    add_win_dll_dep(libgnutls-30.dll)
+  endif()
 endif()
 
 add_library(rfb STATIC ${RFB_SOURCES})

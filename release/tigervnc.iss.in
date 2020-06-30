@@ -24,6 +24,7 @@ LicenseFile=@CMAKE_SOURCE_DIR@\LICENCE.txt
 Name: "{sys}\config\systemprofile\Desktop"
 
 [Files]
+#include "tigervnc_dlls.iss"
 #ifdef BUILD_WINVNC
 Source: "@CMAKE_CURRENT_BINARY_DIR@\win\winvnc\winvnc4.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace; 
 Source: "@CMAKE_CURRENT_BINARY_DIR@\win\wm_hooks\wm_hooks.dll"; DestDir: "{app}"; Flags: ignoreversion restartreplace; 

@@ -27,6 +27,13 @@ endif()
 
 configure_file(release/tigervnc.iss.in release/tigervnc.iss)
 
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/release/tigervnc_dlls.iss "; This file is autmatically generated in CMake.  Any changes will be lost.\r\n")
+foreach(DLL_DEP ${WIN_DLL_DEPS})
+  # requires GetPrerequisites
+  gp_resolve_item("" "${DLL_DEP}" "" "" resolved_file)
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/release/tigervnc_dlls.iss "Source: ${resolved_file}; DestDir: \"{app}\"; Flags: ignoreversion restartreplace;\r\n")
+endforeach()
+
 add_custom_target(installer
   iscc -o. ${INST_DEFS} -F${INST_NAME} release/tigervnc.iss
   DEPENDS ${INST_DEPS}

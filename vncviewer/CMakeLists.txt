@@ -52,6 +52,10 @@ else()
 endif()
 
 target_link_libraries(vncviewer rfb network rdr os ${FLTK_LIBRARIES} ${GETTEXT_LIBRARIES})
+if(WIN32 AND NOT BUILD_STATIC)
+  add_win_dll_dep(mgwfltknox-1.3.dll)
+  add_win_dll_dep(libintl-8.dll)
+endif()
 
 if(WIN32)
   target_link_libraries(vncviewer msimg32)
